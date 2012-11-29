@@ -29,6 +29,14 @@
 		<servlet-name>HelloWorldSessionServlet</servlet-name>
 		<url-pattern>/HelloWorldSessionServlet</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>index</servlet-name>
+		<servlet-class>fr.todooz.web.servlet.IndexServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>index</servlet-name>
+		<url-pattern>/index.html</url-pattern>
+	</servlet-mapping>
 	<filter>
 		<filter-name>monitoring</filter-name>
 		<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
@@ -40,4 +48,7 @@
 	<listener>
 		<listener-class>net.bull.javamelody.SessionListener</listener-class>
 	</listener>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>	
+	</welcome-file-list>
 </web-app>
