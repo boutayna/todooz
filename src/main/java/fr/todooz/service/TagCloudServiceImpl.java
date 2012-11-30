@@ -6,10 +6,11 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Service;
 
 import fr.todooz.domain.Task;
 import fr.todooz.util.TagCloud;
-
+@Service
 public class TagCloudServiceImpl implements TagCloudService {
 	
 	   @Inject

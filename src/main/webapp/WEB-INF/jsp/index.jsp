@@ -21,6 +21,7 @@
 			</c:forEach>
 
 			</div>
+		</div>
            
 
         <div class="span3">
