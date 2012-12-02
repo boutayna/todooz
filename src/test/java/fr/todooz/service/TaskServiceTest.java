@@ -23,7 +23,6 @@ public class TaskServiceTest {
 	@Inject
 	private SessionFactory sessionFactory;
 
-	
 	@Inject
 	private TaskService taskService;
 
@@ -45,6 +44,16 @@ public class TaskServiceTest {
 	public void save() {
 		taskService.save(task());
 
+	}
+
+	@Test
+	public void udpate() {
+		Task task = task();
+
+		taskService.save(task);
+		taskService.save(task);
+
+		Assert.assertEquals(1, taskService.count());
 	}
 
 	@Test
@@ -90,6 +99,18 @@ public class TaskServiceTest {
 		taskService.save(task());
 
 		Assert.assertEquals(2, taskService.count());
+	}
+	
+	@Test
+	public void findById() {
+
+		Task testTask = task();
+		taskService.save(testTask);
+		Long testTaskId = testTask.getId();
+
+		Assert.assertEquals(testTaskId, taskService.findById(testTaskId)
+				.getId());
+
 	}
 
 	private Task task() {

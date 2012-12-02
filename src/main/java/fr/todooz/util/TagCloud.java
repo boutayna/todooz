@@ -33,6 +33,7 @@ public class TagCloud {
 		List<Object> list = new ArrayList<Object>(tags);
 		list=list.subList(0, nbrTag);
 		tags = new HashSet(list);
+
 	}
 
 	public void shuffle() {
@@ -41,4 +42,8 @@ public class TagCloud {
 		tags = new HashSet(list);	
 	}
 
+	public Set<String> getTags() {
+		return tags;
+	}
+	
 }

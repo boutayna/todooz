@@ -7,8 +7,10 @@ import javax.inject.Inject;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.Interval;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional
 	public void save(Task task) {
-		sessionFactory.getCurrentSession().save(task);
+		sessionFactory.getCurrentSession().saveOrUpdate(task);
 	}
 
 	/*
@@ -39,13 +41,10 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional
 	public void delete(Long id) {
-		Session session = sessionFactory.openSession();
-		Transaction tx = session.beginTransaction();
-
+		Session session = sessionFactory.getCurrentSession();
 		String hqlDelete = "delete Task t where t.id = :id";
-		int deletedEntities = session.createQuery(hqlDelete).setLong("id", id)
+		session.createQuery(hqlDelete).setLong("id", id)
 				.executeUpdate();
-		tx.commit();
 	}
 
 	/*
@@ -56,8 +55,9 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Task> findAll() {
-		Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(Task.class);
+		criteria.addOrder(Order.desc("date"));
 		List tasks = criteria.list();
 		return tasks;
 
@@ -71,9 +71,10 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<Task> findByQuery(String query) {
-		Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
 		Criteria crit = session.createCriteria(Task.class);
-		crit.add(Restrictions.like("text", '%' + query + '%').ignoreCase());
+		crit.add(Restrictions.ilike("title", query, MatchMode.ANYWHERE));
+		crit.addOrder(Order.desc("date"));
 		List results = crit.list();
 		return results;
 
@@ -89,6 +90,40 @@ public class TaskServiceImpl implements TaskService {
 	public int count() {
 		List tasks = this.findAll();
 		return tasks.size();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Task> findByTag(String tag) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Task.class);
+		crit.add(Restrictions.ilike("tags", tag, MatchMode.ANYWHERE));
+		crit.addOrder(Order.desc("date"));
+		List results = crit.list();
+		return results;
+	
+	}
+
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Task> findByInterval(Interval interval) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Task.class);
+		crit.add(Restrictions.between("date",interval.getStart().toDate(),interval.getEnd().toDate()));
+		crit.addOrder(Order.desc("date"));
+		List results = crit.list();
+		return results;	
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Task findById(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Task.class);
+		crit.add(Restrictions.eq("id",id));
+		 List results = crit.list();
+		return (Task) results.get(0);
 	}
 
 }
